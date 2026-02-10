@@ -1,0 +1,14 @@
+{
+  "name": "qa-automation-credito-digital",
+  "version": "1.0.0",
+  "description": "Prueba técnica QA Automation - Automatización de flujo de crédito digital",
+  "scripts": {
+    "test": "npx playwright test",
+    "test:headed": "npx playwright test --headed",
+    "report": "npx playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2"
+  }
+}
+

@@ -1,0 +1,24 @@
+<!-- pages/register.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro</title>
+</head>
+<body>
+  <form id="registerForm">
+    <input type="text" name="email" placeholder="Email">
+    <input type="password" name="password" placeholder="Password">
+    <button type="submit">Registrar</button>
+  </form>
+  <div class="success-message" style="display:none;">Registro exitoso</div>
+
+  <script>
+    const form = document.getElementById('registerForm');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault(); // Evita que recargue la página
+      document.querySelector('.success-message').style.display = 'block';
+    });
+  </script>
+</body>
+</html>

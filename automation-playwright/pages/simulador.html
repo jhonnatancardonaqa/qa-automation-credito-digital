@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Simulador</title>
+</head>
+<body>
+
+<h1>Simulador de Crédito</h1>
+
+<form id="simuladorForm">
+  <input type="number" name="monto" placeholder="Monto">
+  <input type="number" name="plazo" placeholder="Plazo">
+  <button type="submit">Simular</button>
+</form>
+
+<div class="resultado" style="display:none;">Resultado mostrado</div>
+<div class="error-message" style="display:none;">Monto inválido</div>
+
+<script>
+  const form = document.getElementById('simuladorForm');
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const monto = Number(form.monto.value);
+
+    document.querySelector('.resultado').style.display = 'none';
+    document.querySelector('.error-message').style.display = 'none';
+
+    if (monto <= 0) {
+      document.querySelector('.error-message').style.display = 'block';
+    } else {
+      document.querySelector('.resultado').style.display = 'block';
+    }
+  });
+</script>
+
+</body>
+</html>
