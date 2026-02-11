@@ -24,3 +24,13 @@ test('Simulador muestra error con monto 0 P1 (negativo)', async ({ page }) => {
 
   await expect(page.locator('.error-message')).toBeVisible();
 });
+test('BUG - Simulador acepta monto cero P1', async ({ page }) => {
+  await page.goto('file://' + __dirname + '/../pages/simulador.html');
+
+  await page.fill('input[name="monto"]', '0');
+  await page.fill('input[name="plazo"]', '12');
+  await page.click('button[type="submit"]');
+
+  // Debería mostrar error, pero no lo hace (BUG)
+  await expect(page.locator('.error-message')).toBeVisible();
+});
