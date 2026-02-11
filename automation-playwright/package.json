@@ -1,6 +1,7 @@
 {
   "name": "qa-automation-credito-digital",
   "version": "1.0.0",
+  "type": "module",
   "description": "Prueba técnica QA Automation - Automatización de flujo de crédito digital",
   "scripts": {
     "test": "npx playwright test",
