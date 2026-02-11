@@ -1,9 +1,7 @@
 import { test, expect } from '@playwright/test';
-import path from 'path';
 
 test('Simulador muestra resultado con monto válido P1', async ({ page }) => {
-  const filePath = path.join(__dirname, '../pages/simulador.html');
-  await page.goto(`file://${filePath}`);
+  await page.goto('file://./pages/simulador.html');
 
   await expect(page.locator('#simuladorForm')).toBeVisible();
 
@@ -15,8 +13,7 @@ test('Simulador muestra resultado con monto válido P1', async ({ page }) => {
 });
 
 test('Simulador muestra error con monto 0 P1 (negativo)', async ({ page }) => {
-  const filePath = path.join(__dirname, '../pages/simulador.html');
-  await page.goto(`file://${filePath}`);
+  await page.goto('file://./pages/simulador.html');
 
   await page.fill('input[name="monto"]', '0');
   await page.fill('input[name="plazo"]', '12');
@@ -24,13 +21,14 @@ test('Simulador muestra error con monto 0 P1 (negativo)', async ({ page }) => {
 
   await expect(page.locator('.error-message')).toBeVisible();
 });
+
 test('BUG - Simulador acepta monto cero P1', async ({ page }) => {
-  await page.goto('file://' + __dirname + '/../pages/simulador.html');
+  await page.goto('file://./pages/simulador.html');
 
   await page.fill('input[name="monto"]', '0');
   await page.fill('input[name="plazo"]', '12');
   await page.click('button[type="submit"]');
 
-  // Debería mostrar error, pero no lo hace (BUG)
+  // BUG: el sistema permite monto 0
   await expect(page.locator('.error-message')).toBeVisible();
 });
