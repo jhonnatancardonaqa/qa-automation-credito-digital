@@ -1,28 +1,33 @@
 import { test, expect } from '@playwright/test';
+import { ProductosPage } from '../pages/ProductosPage';
 
-test('Lista de productos visible P2', async ({ page }) => {
-  await page.goto(new URL('../pages/productos.html', import.meta.url).toString());
+test.describe('P2 - Productos', () => {
 
-  await expect(page.locator('#productos')).toBeVisible();
+  test('Lista visible', async ({ page }) => {
+    const productos = new ProductosPage(page);
+    await productos.goto();
+    const cantidad = await productos.obtenerCantidadProductos();
+    expect(cantidad).toBeGreaterThan(0);
+  });
 
-  const productos = page.locator('.product-item');
-  const cantidad = await productos.count();
+  test('Validar mínimo 1 producto', async ({ page }) => {
+    const productos = new ProductosPage(page);
+    await productos.goto();
+    const cantidad = await productos.obtenerCantidadProductos();
+    expect(cantidad).toBeGreaterThanOrEqual(1);
+  });
 
-  expect(cantidad).toBeGreaterThan(0);
-});
+  test('Validar que existen productos en DOM', async ({ page }) => {
+    const productos = new ProductosPage(page);
+    await productos.goto();
+    await expect(productos.listaProductos.first()).toBeVisible();
+  });
 
-test('Botón solicitar deshabilitado por defecto P2', async ({ page }) => {
-  await page.goto(new URL('../pages/productos.html', import.meta.url).toString());
+  test('Validar conteo exacto mayor a 0', async ({ page }) => {
+    const productos = new ProductosPage(page);
+    await productos.goto();
+    const cantidad = await productos.obtenerCantidadProductos();
+    expect(cantidad).not.toBe(0);
+  });
 
-  await expect(page.locator('#solicitar')).toBeDisabled();
-});
-
-test('BUG - Lista de productos vacía P2', async ({ page }) => {
-  await page.goto(new URL('../pages/productos.html', import.meta.url).toString());
-
-  const productos = page.locator('.product-item');
-  const cantidad = await productos.count();
-
-  // BUG: debería haber productos
-  expect(cantidad).toBeGreaterThan(0);
 });

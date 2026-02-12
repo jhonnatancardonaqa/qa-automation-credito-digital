@@ -1,56 +1,34 @@
 import { test, expect } from '@playwright/test';
+import { OnboardingPage } from '../pages/OnboardingPage';
 
+test.describe('P0 - Onboarding', () => {
 
-test('Registro exitoso P0', async ({ page }) => {
-  const filePath = new URL('../pages/register.html', import.meta.url).toString();
-await page.goto(filePath);
+  test('Registro válido', async ({ page }) => {
+    const onboarding = new OnboardingPage(page);
+    await onboarding.goto();
+    await onboarding.completarFormulario('test@mail.com', 'Password123');
+    await expect(onboarding.successMessage).toBeVisible();
+  });
 
-  // Validar que el formulario exista
-  await expect(page.locator('#registerForm')).toBeVisible();
-  // Simular submit
-  await page.click('button[type="submit"]');
-  // Validar resultado esperado
-  await expect(page.locator('.success-message')).toBeVisible();
-});
+  test('BUG 1 - No debería permitir registro sin datos', async ({ page }) => {
+    const onboarding = new OnboardingPage(page);
+    await onboarding.goto();
+    await onboarding.completarFormulario('', '');
+    await expect(onboarding.successMessage).not.toBeVisible();
+  });
 
-test('Formulario de registro visible P0', async ({ page }) => {
-  const filePath = new URL('../pages/register.html', import.meta.url).toString();
-await page.goto(filePath);
-  // Validación básica crítica (P0)
-  await expect(page.locator('form')).toBeVisible();
-});
-test('Registro NO debe permitir submit sin datos P0', async ({ page }) => {
-  const filePath = new URL('../pages/register.html', import.meta.url).toString();
-  await page.goto(filePath);
+  test('BUG 2 - No debería permitir email inválido', async ({ page }) => {
+    const onboarding = new OnboardingPage(page);
+    await onboarding.goto();
+    await onboarding.completarFormulario('correo-invalido', 'Password123');
+    await expect(onboarding.successMessage).not.toBeVisible();
+  });
 
-  // 1. NO llenamos email ni password
-  // 2. Hacemos submit
-  await page.click('button[type="submit"]');
+  test('BUG 3 - No debería permitir contraseña corta', async ({ page }) => {
+    const onboarding = new OnboardingPage(page);
+    await onboarding.goto();
+    await onboarding.completarFormulario('test@mail.com', '123');
+    await expect(onboarding.successMessage).not.toBeVisible();
+  });
 
-  // 3. VALIDACIÓN esperada (pero hoy FALLA)
-  await expect(page.locator('.success-message')).toBeHidden();
-})
-test('BUG - Permite email con formato inválido', async ({ page }) => {
-  const filePath = new URL('../pages/register.html', import.meta.url).toString();
-  await page.goto(filePath);
-
-  // Email inválido
-  await page.fill('input[name="email"]', 'correo-invalido');
-  await page.fill('input[name="password"]', 'Password123');
-  await page.click('button[type="submit"]');
-
-  // Debería bloquear el registro (pero hoy probablemente lo permite)
-  await expect(page.locator('.success-message')).toBeHidden();
-});
-
-test('BUG - Permite contraseña demasiado corta', async ({ page }) => {
-  const filePath = new URL('../pages/register.html', import.meta.url).toString();
-  await page.goto(filePath);
-
-  await page.fill('input[name="email"]', 'test@mail.com');
-  await page.fill('input[name="password"]', '123');
-  await page.click('button[type="submit"]');
-
-  // Debería bloquear el registro (pero hoy probablemente lo permite)
-  await expect(page.locator('.success-message')).toBeHidden();
 });

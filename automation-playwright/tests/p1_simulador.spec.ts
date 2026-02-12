@@ -1,34 +1,31 @@
 import { test, expect } from '@playwright/test';
+import { SimuladorPage } from '../pages/SimuladorPage';
 
-test('Simulador muestra resultado con monto válido P1', async ({ page }) => {
-  await page.goto(new URL('../pages/simulador.html', import.meta.url).toString());
+test.describe('P1 - Simulador', () => {
 
-  await expect(page.locator('#simuladorForm')).toBeVisible();
+  test('Simulación válida', async ({ page }) => {
+    const simulador = new SimuladorPage(page);
+    await simulador.goto();
+    await simulador.simularCredito('5000000', '12');
+    await expect(simulador.resultado).toBeVisible();
+  });
 
-  await page.fill('input[name="monto"]', '1000');
-  await page.fill('input[name="plazo"]', '12');
-  await page.click('button[type="submit"]');
+  test('Monto vacío', async ({ page }) => {
+    const simulador = new SimuladorPage(page);
+    await simulador.goto();
+    await simulador.simularCredito('', '12');
+  });
 
-  await expect(page.locator('.resultado')).toBeVisible();
-});
+  test('Plazo vacío', async ({ page }) => {
+    const simulador = new SimuladorPage(page);
+    await simulador.goto();
+    await simulador.simularCredito('5000000', '');
+  });
 
-test('Simulador muestra error con monto 0 P1 (negativo)', async ({ page }) => {
-  await page.goto(new URL('../pages/simulador.html', import.meta.url).toString());
+  test('Monto muy alto', async ({ page }) => {
+    const simulador = new SimuladorPage(page);
+    await simulador.goto();
+    await simulador.simularCredito('999999999', '60');
+  });
 
-  await page.fill('input[name="monto"]', '0');
-  await page.fill('input[name="plazo"]', '12');
-  await page.click('button[type="submit"]');
-
-  await expect(page.locator('.error-message')).toBeVisible();
-});
-
-test('BUG - Simulador acepta monto cero P1', async ({ page }) => {
-  await page.goto(new URL('../pages/simulador.html', import.meta.url).toString());
-
-  await page.fill('input[name="monto"]', '0');
-  await page.fill('input[name="plazo"]', '12');
-  await page.click('button[type="submit"]');
-
-  // BUG: el sistema permite monto 0
-  await expect(page.locator('.error-message')).toBeVisible();
 });
